@@ -9,9 +9,9 @@ from stable_baselines3.common.vec_env import VecMonitor
 config = {
     "model_name": "PPO_v1",
     "nb_zones": 3,
-    "total_timesteps": 1e5,
+    "total_timesteps": 5e6,
     "t_ext_scenario": 5.0,
-    "time_steps_eval": 1440
+    "time_steps_eval": 2880
 }
 
 building_config = {
@@ -23,7 +23,8 @@ building_config = {
     "C_val": 1e6,
     "R_inter": 0.5,
     "max_power": 2000,
-    "dt": 60
+    "dt": 60,
+    "max_steps": 2880
 }
 
 # 1. Création et préparation de l'environnement pour SB3
@@ -31,7 +32,7 @@ raw_env = BuildingEnv(building_config, render_mode=None)
 
 # On transforme l'env PettingZoo en un format compréhensible par l'IA (Vectorized Env)
 env_train = ss.pettingzoo_env_to_vec_env_v1(raw_env)
-env_train = ss.concat_vec_envs_v1(env_train, num_vec_envs=1, num_cpus=1, base_class="stable_baselines3")
+env_train = ss.concat_vec_envs_v1(env_train, num_vec_envs=1, num_cpus=0, base_class="stable_baselines3")
 env_train = VecMonitor(env_train)
 
 # 2. Configuration du "Cerveau" (PPO)
