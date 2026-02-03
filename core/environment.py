@@ -3,6 +3,7 @@ import numpy as np
 from gymnasium import spaces
 from pettingzoo import ParallelEnv
 from .building_model import ThermalModel
+import config as cfg
 
 
 class BuildingEnv(ParallelEnv):
@@ -13,10 +14,13 @@ class BuildingEnv(ParallelEnv):
     }
 
     def __init__(self, building_config, render_mode=None):
+
+        if building_config is None:
+            building_config = cfg.BUILDING_CONFIG
+
         # 1. Gestion du rendu (Standard PettingZoo)
         self.render_mode = render_mode
         
-        # FIX: Filter config to remove keys that ThermalModel doesn't need
         model_config = building_config.copy()
         model_config.pop("max_steps", None) # Remove max_steps before unpacking
 
@@ -27,12 +31,13 @@ class BuildingEnv(ParallelEnv):
         self.possible_agents = [f"zone_{i}" for i in range(self.model.nb_zones)]
         
         # 4. Paramètres de simulation
-        self.target_temp = 21.0
+        self.target_temp = cfg.TARGET_TEMP
         self.current_step = 0
-        self.default_t_ext = 5.0
-        self.alpha = 0.5
-        self.beta = 0.01
-        self.max_steps = building_config.get("max_steps", 1440)
+        self.default_t_ext = cfg.TRAIN_T_EXT
+        
+        self.alpha = cfg.REWARD_CONFIG["alpha"]
+        self.beta = cfg.REWARD_CONFIG["beta"]
+        self.max_steps = building_config.get("max_steps", cfg.MAX_STEPS)
 
 
     @functools.lru_cache(maxsize=None)
@@ -50,8 +55,7 @@ class BuildingEnv(ParallelEnv):
         if minute_of_day < 360 or minute_of_day > 1320:
             return 0.15
         return 0.25
-
-
+    """
     def _get_obs(self, temps, base_t_ext):
         price = self.get_price()
         observations = {}
@@ -68,8 +72,33 @@ class BuildingEnv(ParallelEnv):
                 float(nb_v),
                 price
             ], dtype=np.float32)
-        return observations
+        return observations """
 
+    def _get_obs(self, temps, base_t_ext):
+        price = self.get_price()
+        observations = {}
+        for i, agent in enumerate(self.possible_agents):
+            # Données locales
+            my_temp = temps[i]
+            t_ext_zone = base_t_ext + self.model.t_ext_offset[i]
+            
+            # Données voisins
+            idx_voisins = np.where(self.model.adj[i] == 1)[0]
+            if len(idx_voisins) > 0:
+                mean_v_temp = np.mean(temps[idx_voisins])
+            else:
+                mean_v_temp = my_temp # Si pas de voisin, on prend sa propre temp
+
+            # --- ON CENTRE TOUT SUR 0 ---
+            observations[agent] = np.array([
+                my_temp - self.target_temp,        # Ecart Cible (Ex: -1.0 si 20°C)
+                t_ext_zone - my_temp,              # Ecart Extérieur (Delta T qui cause les pertes)
+                mean_v_temp - my_temp,             # Ecart Voisin (Delta T échange)
+                price,                             # Prix (déjà petit, ok)
+                float(len(idx_voisins))            # Info structurelle
+            ], dtype=np.float32)
+            
+        return observations
 
     def reset(self, seed=None, options=None):
         # Réinitialisation PettingZoo
@@ -84,7 +113,7 @@ class BuildingEnv(ParallelEnv):
         return self._get_obs(temps, t_ext), {}
 
     def step(self, actions, t_ext=None):
-        # Sécurité si t_ext n'est pas fourni par l'IA (Training)
+
         if t_ext is None:
             t_ext = self.default_t_ext
             
@@ -98,16 +127,16 @@ class BuildingEnv(ParallelEnv):
         # 2. Préparation des observations
         observations = self._get_obs(new_temps, t_ext)
         
-        # 3. Calcul de la récompense (Reward)
+        # 3. Calcul du reward
         rewards = {}
         for i, agent in enumerate(self.agents):
             error = abs(new_temps[i] - self.target_temp)
-            thermal_loss = self.alpha * (error + error**2) # Elastic net
+            thermal_loss = self.alpha * (error + (error)**2) # Elastic net
             
             power_consumption = abs(act_array[i]) * self.model.max_power # Le froid conssomme autant que le chaud 
-            energy_cost = self.beta * (power_consumption * price)
+            energy_cost = self.beta * (power_consumption * price) / 60.0 # Coût en €/min
             
-            rewards[agent] = -float(thermal_loss + energy_cost) / 10.0
+            rewards[agent] = -float(thermal_loss + energy_cost) / 20  # Normalisation
 
         # 4. Conditions d'arrêt (Truncation après 24h)
         # Indispensable pour que SB3 affiche 'ep_rew_mean'
