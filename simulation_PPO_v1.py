@@ -9,7 +9,7 @@ import config as cfg
 
 config = {
     "model_name": "PPO_v1",
-    "total_timesteps": 5e5,
+    "total_timesteps": 1e6,
     #"time_steps_eval": 2880
 }
 
