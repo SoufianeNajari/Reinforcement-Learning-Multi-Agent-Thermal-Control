@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-FILE_TO_PLOT = "results/data_PPO_Thermal_v1.csv"
+FILE_TO_PLOT = "results/benchmark_PPO_v1.csv"
 df = pd.read_csv(FILE_TO_PLOT)
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)

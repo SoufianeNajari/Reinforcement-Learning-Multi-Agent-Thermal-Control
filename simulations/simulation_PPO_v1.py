@@ -1,15 +1,18 @@
 import os
+import sys
 import numpy as np
 import pandas as pd
 import supersuit as ss
 from stable_baselines3 import PPO
-from core.environment import BuildingEnv
 from stable_baselines3.common.vec_env import VecMonitor 
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from core.environment import BuildingEnv
 import config as cfg
 
 config = {
     "model_name": "PPO_v1",
-    "total_timesteps": 1e6,
+    "total_timesteps": 1e3,
     #"time_steps_eval": 2880
 }
 

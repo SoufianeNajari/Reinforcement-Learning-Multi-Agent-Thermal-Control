@@ -10,7 +10,7 @@ import config as cfg
 # ==========================================
 # 1. CONFIGURATION
 # ==========================================
-test_config = {
+benchmark_config = {
     "model_name": "PPO_v1",         
     "time_steps_eval": 1440,    # 48h
 }
@@ -28,7 +28,7 @@ env = ss.concat_vec_envs_v1(env, num_vec_envs=1, num_cpus=0, base_class="stable_
 # ==========================================
 # 3. CHARGEMENT
 # ==========================================
-model_path = f"models/{test_config['model_name']}"
+model_path = f"models/{benchmark_config['model_name']}"
 try:
     model = PPO.load(model_path)
     print(f"Modèle chargé : {model_path}")
@@ -39,12 +39,12 @@ except FileNotFoundError:
 # ==========================================
 # 4. SIMULATION
 # ==========================================
-print(f"--- Lancement simulation ({test_config['time_steps_eval']} min) ---")
+print(f"--- Lancement simulation ({benchmark_config['time_steps_eval']} min) ---")
 raw_env.default_t_ext = cfg.TRAIN_T_EXT
 obs = env.reset() 
 data = []
 
-for step in range(test_config["time_steps_eval"]):
+for step in range(benchmark_config["time_steps_eval"]):
     actions, _ = model.predict(obs, deterministic=True)
     next_obs, rewards, dones, infos = env.step(actions)
     
@@ -74,7 +74,7 @@ for step in range(test_config["time_steps_eval"]):
 # ==========================================
 df = pd.DataFrame(data)
 os.makedirs("results", exist_ok=True)
-csv_filename = f"results/test_{test_config['model_name']}.csv"
+csv_filename = f"results/benchmark_{benchmark_config['model_name']}.csv"
 df.to_csv(csv_filename, index=False)
 print(f"Données sauvegardées : {csv_filename}")
 
@@ -97,5 +97,5 @@ ax2.legend()
 ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig(f"graphs/graph_{test_config['model_name']}.png")
+plt.savefig(f"graphs/graph_{benchmark_config['model_name']}.png")
 plt.show()
