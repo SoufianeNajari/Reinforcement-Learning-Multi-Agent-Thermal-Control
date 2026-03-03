@@ -74,7 +74,7 @@ for step in range(benchmark_config["time_steps_eval"]):
 # ==========================================
 df = pd.DataFrame(data)
 os.makedirs("results", exist_ok=True)
-csv_filename = f"results/benchmark_{benchmark_config['model_name']}.csv"
+csv_filename = f"results/data_model_{benchmark_config['model_name']}.csv"
 df.to_csv(csv_filename, index=False)
 print(f"Données sauvegardées : {csv_filename}")
 
@@ -97,5 +97,5 @@ ax2.legend()
 ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig(f"graphs/graph_{benchmark_config['model_name']}.png")
+#plt.savefig(f"graphs/resultat_model_{benchmark_config['model_name']}.png")
 plt.show()

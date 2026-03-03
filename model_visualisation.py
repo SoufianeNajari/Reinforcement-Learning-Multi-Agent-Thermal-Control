@@ -2,7 +2,13 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-FILE_TO_PLOT = "results/benchmark_PPO_v1.csv"
+FILE_TO_PLOT = "results/data_model_PPO_v1.csv"
+#FILE_TO_PLOT = "results/data_model_Proportionnel_5.csv"
+#FILE_TO_PLOT = "results/data_model_PI.csv"
+save_plot = "graphs/resultat_model_PPO_v1.png"
+
+to_save = False
+
 df = pd.read_csv(FILE_TO_PLOT)
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
@@ -33,7 +39,8 @@ ax2.legend()
 ax2.grid(True)
 
 plt.tight_layout()
-os.makedirs("graphs", exist_ok=True)
-plt.savefig("graphs/resultat_simulation.png")
 plt.show()
-print("Graphique sauvegardé dans graphs/resultat_simulation.png")
+if to_save:
+    os.makedirs("graphs", exist_ok=True)
+    plt.savefig(save_plot)
+    print("Graphique sauvegardé dans graphs/resultat_simulation.png")

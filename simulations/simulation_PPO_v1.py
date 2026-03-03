@@ -12,7 +12,7 @@ import config as cfg
 
 config = {
     "model_name": "PPO_v1",
-    "total_timesteps": 1e3,
+    "total_timesteps": 1e6,
     #"time_steps_eval": 2880
 }
 
@@ -33,7 +33,7 @@ model = PPO(
     learning_rate=0.0003,
     n_steps=2048,
     batch_size=64,    
-    ent_coef=0.01,    # <--- Force l'IA à explorer (évite le std=0)
+    ent_coef=0.01,    # Force l'IA à explorer (évite le std=0)
     device="auto"
 )
 

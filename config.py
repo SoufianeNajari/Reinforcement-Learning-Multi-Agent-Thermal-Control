@@ -2,7 +2,7 @@
 TARGET_TEMP = 20.0
 DT = 60           # Pas de temps (secondes)
 MAX_STEPS = 2880  # Durée épisode (mn)
-TRAIN_T_EXT = 0.0 # Température extérieure par défaut
+TRAIN_T_EXT = 35.0 # Température extérieure par défaut
 
 # 2. PHYSIQUE DU BÂTIMENT (Partagé Train/Test)
 BUILDING_CONFIG = {
@@ -10,7 +10,7 @@ BUILDING_CONFIG = {
     "expo_ext": [0.0, 1.0, 1.0],
     "t_ext_offset": [0.0, -2.0, 3.0], 
     ####
-    "start_temp": 12.0, # Température initiale des zones
+    "start_temp": 35.0, # Température initiale des zones
     
     # Isolation & Inertie
     "R_val": 0.05,       
@@ -25,6 +25,6 @@ BUILDING_CONFIG = {
 
 # 3. RÉGLAGES DE LA RÉCOMPENSE
 REWARD_CONFIG = {
-    "alpha": 1.0,       # Priorité absolue au confort
-    "beta": 2.0          # Coût de l'énergie
+    "alpha": 1.0,       # Importance au confort
+    "beta": 2.0          # Importance de l'économie d'énergie
 }
