@@ -13,7 +13,7 @@ class BuildingEnv(ParallelEnv):
         "render_modes": [None]
     }
 
-    def __init__(self, building_config, render_mode=None):
+    def __init__(self, building_config, render_mode=None, random_start=True):
 
         if building_config is None:
             building_config = cfg.BUILDING_CONFIG
@@ -25,6 +25,7 @@ class BuildingEnv(ParallelEnv):
         model_config.pop("max_steps", None) # Remove max_steps before unpacking
 
         # 2. Initialisation du modèle physique avec unpacking
+        self.random_start = random_start
         self.model = ThermalModel(**model_config)
         
         # 3. Configuration des agents
@@ -101,14 +102,15 @@ class BuildingEnv(ParallelEnv):
         return observations
 
     def reset(self, seed=None, options=None):
-        # Réinitialisation PettingZoo
         self.agents = self.possible_agents[:]
         self.current_step = 0
         
-        # Reset de la physique
+        if self.random_start:
+            self.model.start_temp = np.random.uniform(10.0, 35.0)
+            self.default_t_ext = np.random.uniform(-5.0, 35.0)
+        
         temps = self.model.reset()
         
-        # Gestion de t_ext au démarrage
         t_ext = options.get("t_ext", self.default_t_ext) if options else self.default_t_ext
         return self._get_obs(temps, t_ext), {}
 

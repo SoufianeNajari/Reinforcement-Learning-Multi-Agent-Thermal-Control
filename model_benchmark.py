@@ -11,7 +11,7 @@ import config as cfg
 # 1. CONFIGURATION
 # ==========================================
 benchmark_config = {
-    "model_name": "PPO_v1",         
+    "model_name": "PPO_v2",         
     "time_steps_eval": 1440,    # 48h
 }
 
@@ -19,7 +19,7 @@ benchmark_config = {
 # 2. PRÉPARATION
 # ==========================================
 print("--- Préparation de l'environnement ---")
-raw_env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None)
+raw_env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None, random_start=False)
 raw_env.target_temp = cfg.TARGET_TEMP
 
 env = ss.pettingzoo_env_to_vec_env_v1(raw_env)

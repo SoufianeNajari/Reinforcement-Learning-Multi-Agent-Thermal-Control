@@ -16,6 +16,7 @@ config = {
     #"time_steps_eval": 2880
 }
 
+
 # 1. Création et préparation de l'environnement pour SB3
 raw_env = BuildingEnv(cfg.BUILDING_CONFIG, render_mode=None)
 
@@ -41,3 +42,33 @@ print(f"--- Début de l'entraînement de {config['model_name']} ---")
 model.learn(total_timesteps=config["total_timesteps"], progress_bar=True)
 model.save(f"models/{config['model_name']}")
 
+
+"""
+
+# 4. Évaluation et Sauvegarde des résultats
+print("--- Génération du CSV de performance ---")
+eval_env = BuildingEnv(cfg.BUILDING_CONFIG, render_mode=None)
+obs, _ = eval_env.reset()
+data = []
+
+for step in range(config["time_steps_eval"]):
+    actions_dict = {}
+    row = {"step": step, "target": eval_env.target_temp}
+    
+    for agent in eval_env.possible_agents:
+        # L'IA prédit maintenant l'action optimale au lieu d'utiliser Kp
+        action, _ = model.predict(obs[agent], deterministic=True)
+        actions_dict[agent] = action
+        
+        row[f"temp_{agent}"] = obs[agent][0]
+        row[f"act_{agent}"] = float(action[0])
+
+    obs, rewards, _, _, _ = eval_env.step(actions_dict, t_ext=cfg.TRAIN_T_EXT)
+    data.append(row)
+
+os.makedirs("results", exist_ok=True)   
+filename = f"results/data_{config['model_name']}.csv"
+pd.DataFrame(data).to_csv(filename, index=False)
+print(f"Terminé ! Fichier créé : {filename}")
+
+"""
