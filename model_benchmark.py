@@ -11,7 +11,7 @@ import config as cfg
 # 1. CONFIGURATION
 # ==========================================
 benchmark_config = {
-    "model_name": "PPO_v2",         
+    "model_name": "PPO_v2_HVAC",         
     "time_steps_eval": 1440,    # 48h
 }
 

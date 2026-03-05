@@ -2,12 +2,12 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-FILE_TO_PLOT = "results/data_model_PPO_v1.csv"
-#FILE_TO_PLOT = "results/data_model_Proportionnel_5.csv"
-#FILE_TO_PLOT = "results/data_model_PI.csv"
-save_plot = "graphs/resultat_model_PPO_v1.png"
+#FILE_TO_PLOT = "results/data_model_PPO_v2_HVAC.csv"
+#FILE_TO_PLOT = "results/data_model_Proportionnel_climatisation.csv"
+FILE_TO_PLOT = "results/data_model_PI.csv"
+save_plot = "graphs/resultat_model_PI_climatisation.png"
 
-to_save = False
+to_save = True
 
 df = pd.read_csv(FILE_TO_PLOT)
 
@@ -39,8 +39,9 @@ ax2.legend()
 ax2.grid(True)
 
 plt.tight_layout()
-plt.show()
 if to_save:
     os.makedirs("graphs", exist_ok=True)
     plt.savefig(save_plot)
     print("Graphique sauvegardé dans graphs/resultat_simulation.png")
+
+plt.show()

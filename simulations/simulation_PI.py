@@ -9,15 +9,14 @@ import config as cfg
 
 config = {
     "model_name": "model_PI",
-    "time_steps": 120,    
+    "time_steps": 90,    
     "Kp": 1.0, 
-    "Ki": 0.05,
-    "t_ext_scenario": 0.0
+    "Ki": 0.1,
 }
     
-env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None)
+env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None, random_start=False)
 
-env.default_t_ext = config["t_ext_scenario"]
+env.default_t_ext = cfg.TRAIN_T_EXT
 observations, _ = env.reset()
 
 data = []
@@ -48,7 +47,7 @@ for step in range(config["time_steps"]):
         row[f"temp_{agent}"] = temp_actuelle
         row[f"act_{agent}"] = float(val_action)
 
-    observations, _, _, _, _ = env.step(actions, t_ext=config["t_ext_scenario"])
+    observations, _, _, _, _ = env.step(actions, t_ext=cfg.TRAIN_T_EXT)
     data.append(row)
 
 os.makedirs("results", exist_ok=True)

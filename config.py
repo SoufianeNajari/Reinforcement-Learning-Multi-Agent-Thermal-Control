@@ -1,8 +1,8 @@
 # 1. PARAMÈTRES SIMULATION
-TARGET_TEMP = 25.0
+TARGET_TEMP = 20.0
 DT = 60           # Pas de temps (secondes)
 MAX_STEPS = 2880  # Durée épisode (mn)
-TRAIN_T_EXT = 5.0 # Température extérieure par défaut
+TRAIN_T_EXT = 0.0 # Température extérieure par défaut
 
 # 2. PHYSIQUE DU BÂTIMENT (Partagé Train/Test)
 BUILDING_CONFIG = {
@@ -10,13 +10,13 @@ BUILDING_CONFIG = {
     "expo_ext": [0.0, 1.0, 1.0],
     "t_ext_offset": [0.0, -2.0, 3.0], 
     ####
-    "start_temp": 12.0, # Température initiale des zones
+    "start_temp": 20.0, # Température initiale des zones
     
     # Isolation & Inertie
-    "R_val": 0.05,       
+    "R_val": 0.05, # Résistance thermique (m²K/W) avec l'extérieur
     "C_int": 1e5,        
     "C_ext": 5e5,     
-    "R_inter": 0.1,      
+    "R_inter": 0.1, # Résistance thermique entre les zones   
     
     "max_power": 2000,
     "dt": DT,

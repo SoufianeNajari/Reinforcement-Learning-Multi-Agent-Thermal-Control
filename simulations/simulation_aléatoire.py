@@ -1,8 +1,19 @@
-import numpy as np
-from core.environment import BuildingEnv
+import os
+import sys
 
-# On crée un bâtiment à 3 zones (donc 3 agents)
-env = BuildingEnv(nb_zones=3)
+import numpy as np
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from core.environment import BuildingEnv
+import config as cfg
+
+config = {
+    "model_name": "model_constant",
+    "time_steps": 90,    
+    "Kp": 1.0
+}
+    
+env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None, random_start=False)
+
 observations, infos = env.reset()
 time_steps = 20
 
