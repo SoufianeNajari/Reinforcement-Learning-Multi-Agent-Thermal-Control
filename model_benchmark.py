@@ -7,17 +7,15 @@ from stable_baselines3 import PPO
 from core.environment import BuildingEnv
 import config as cfg
 
-# ==========================================
 # 1. CONFIGURATION
-# ==========================================
+
 benchmark_config = {
-    "model_name": "PPO_v2_HVAC",         
-    "time_steps_eval": 1440,    # 48h
+    "model_name": "PPO_v5_HVAC", 
+    #"model_name": "best_model",        
+    "time_steps_eval": 180,    
 }
 
-# ==========================================
 # 2. PRÉPARATION
-# ==========================================
 print("--- Préparation de l'environnement ---")
 raw_env = BuildingEnv(cfg.BUILDING_CONFIG.copy(), render_mode=None, random_start=False)
 raw_env.target_temp = cfg.TARGET_TEMP
@@ -25,9 +23,7 @@ raw_env.target_temp = cfg.TARGET_TEMP
 env = ss.pettingzoo_env_to_vec_env_v1(raw_env)
 env = ss.concat_vec_envs_v1(env, num_vec_envs=1, num_cpus=0, base_class="stable_baselines3")
 
-# ==========================================
 # 3. CHARGEMENT
-# ==========================================
 model_path = f"models/{benchmark_config['model_name']}"
 try:
     model = PPO.load(model_path)
@@ -36,9 +32,7 @@ except FileNotFoundError:
     print(f"ERREUR: Fichier introuvable {model_path}")
     exit()
 
-# ==========================================
 # 4. SIMULATION
-# ==========================================
 print(f"--- Lancement simulation ({benchmark_config['time_steps_eval']} min) ---")
 raw_env.default_t_ext = cfg.TRAIN_T_EXT
 obs = env.reset() 
@@ -69,9 +63,8 @@ for step in range(benchmark_config["time_steps_eval"]):
     data.append(row)
     obs = next_obs
 
-# ==========================================
+
 # 5. RÉSULTATS
-# ==========================================
 df = pd.DataFrame(data)
 os.makedirs("results", exist_ok=True)
 csv_filename = f"results/data_model_{benchmark_config['model_name']}.csv"
@@ -97,5 +90,4 @@ ax2.legend()
 ax2.grid(True, alpha=0.3)
 
 plt.tight_layout()
-#plt.savefig(f"graphs/resultat_model_{benchmark_config['model_name']}.png")
 plt.show()

@@ -2,10 +2,11 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#FILE_TO_PLOT = "results/data_model_PPO_v2_HVAC.csv"
+FILE_TO_PLOT = "results/data_model_PPO_v5_hivernal.csv"
 #FILE_TO_PLOT = "results/data_model_Proportionnel_climatisation.csv"
-FILE_TO_PLOT = "results/data_model_PI.csv"
-save_plot = "graphs/resultat_model_PI_climatisation.png"
+#FILE_TO_PLOT = "results/data_model_PI_hivernal.csv"
+#FILE_TO_PLOT = "results/data_model_Proportionnel_hivernal.csv"
+save_plot = "graphs/resultat_model_PPO_v5_hivernal.png"
 
 to_save = True
 

@@ -8,8 +8,8 @@ from core.environment import BuildingEnv
 import config as cfg
 
 config = {
-    "model_name": "model_Proportionnel_climatisation",
-    "time_steps": 90,    
+    "model_name": "model_Proportionnel_hivernal",
+    "time_steps": 180,    
     "Kp": 1.0
 }
     
