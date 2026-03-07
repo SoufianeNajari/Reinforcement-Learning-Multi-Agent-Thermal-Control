@@ -12,7 +12,7 @@ import config as cfg
 benchmark_config = {
     "model_name": "PPO_v5_HVAC", 
     #"model_name": "best_model",        
-    "time_steps_eval": 180,    
+    "time_steps_eval": 720,    
 }
 
 # 2. PRÉPARATION
