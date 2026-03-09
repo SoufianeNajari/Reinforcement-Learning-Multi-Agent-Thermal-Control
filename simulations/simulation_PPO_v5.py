@@ -23,7 +23,7 @@ os.makedirs("models", exist_ok=True)
 # 1. Preparation of the environment for SB3
 raw_env = BuildingEnv(cfg.BUILDING_CONFIG, render_mode=None)
 
-# On transforme l'env PettingZoo en un format compréhensible par l'IA (Vectorized Env)
+# On transforme l'env PettingZoo en un Vectorized Env compatible avec Stable Baselines3
 env_train = ss.pettingzoo_env_to_vec_env_v1(raw_env)
 env_train = ss.concat_vec_envs_v1(env_train, num_vec_envs=1, num_cpus=0, base_class="stable_baselines3")
 
@@ -49,7 +49,7 @@ eval_callback = EvalCallback(
     env_train, 
     best_model_save_path="./models/best/",
     log_path="./logs/results/", 
-    eval_freq=20000, # Évalue tous les 10k pas
+    eval_freq=20000,
     deterministic=True, 
     render=False
 )

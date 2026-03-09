@@ -7,7 +7,7 @@ import config as cfg
 
 
 class BuildingEnv(ParallelEnv):
-    # metadata indispensable pour Stable-Baselines3 et SuperSuit
+
     metadata = {
         "name": "building_thermal_v0",
         "render_modes": [None]
@@ -43,8 +43,7 @@ class BuildingEnv(ParallelEnv):
 
     @functools.lru_cache(maxsize=None)
     def observation_space(self, agent):
-        # [Température zone, Température extérieure]
-        return spaces.Box(low=-20, high=120, shape=(5,), dtype=np.float32)
+        return spaces.Box(low=-100, high=100, shape=(5,), dtype=np.float32)
 
     @functools.lru_cache(maxsize=None)
     def action_space(self, agent):
@@ -144,7 +143,6 @@ class BuildingEnv(ParallelEnv):
         # Indispensable pour que SB3 affiche 'ep_rew_mean'
         duree_max_atteinte = self.current_step >= self.max_steps
         
-        # Indispensable : On définit l'état pour TOUS les agents possibles
         terminations = {agent: False for agent in self.possible_agents}
         truncations = {agent: duree_max_atteinte for agent in self.possible_agents}
         infos = {agent: {} for agent in self.possible_agents}
